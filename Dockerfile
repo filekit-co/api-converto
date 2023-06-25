@@ -33,3 +33,5 @@ EXPOSE 80
 EXPOSE 443
 
 COPY . /src/
+
+CMD exec uvicorn --port $PORT --host 0.0.0.0 main:app
