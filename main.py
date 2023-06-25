@@ -1,9 +1,10 @@
 
+import os
+
 import uvicorn
+from api import pdf_kit, to_doc, to_docx, to_pdf
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from api import pdf_kit, to_doc, to_docx, to_pdf
 
 app = FastAPI(title='Converto pdf api server')
 
@@ -27,6 +28,6 @@ for router in routers:
     app.include_router(router)
 
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="localhost", port=8001, reload=True)
 
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get('PORT', 8001)), log_level="info")
