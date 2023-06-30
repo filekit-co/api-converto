@@ -2,7 +2,7 @@
 import os
 
 import uvicorn
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import pdf_kit, to_doc, to_docx, to_pdf

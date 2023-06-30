@@ -20,7 +20,7 @@ async def epub_to_docx(
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, 'epub', password)
+    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.epub', password)
     
     return Response(
         content=docx_bytes.getvalue(),
@@ -42,7 +42,7 @@ async def pdf_to_docx(
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, 'pdf', password)
+    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.pdf', password)
     
     return Response(
         content=docx_bytes.getvalue(),
@@ -65,7 +65,7 @@ async def xps_to_docx(
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, 'xps',password)
+    docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.xps',password)
     
     return Response(
         content=docx_bytes.getvalue(),

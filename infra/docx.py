@@ -30,6 +30,7 @@ class DocxConverter(Converter):
 
         # initialize empty pages container
         self._pages = Pages()
+        self._input_file_type = input_file_type
 
 
     def __enter__(self):
@@ -40,12 +41,12 @@ class DocxConverter(Converter):
 
     @property
     def docx_name(self):
-        return out_filename(self.filename_pdf, '.pdf', '.docx')
+        return out_filename(self.filename_pdf, self._input_file_type, '.docx')
         
 
     @property
     def doc_name(self):
-        return out_filename(self.filename_pdf, '.pdf', '.doc')
+        return out_filename(self.filename_pdf, self._input_file_type, '.doc')
 
     def convert(self, docx_filename:str=None, start:int=0, end:int=None, pages:list=None, **kwargs):
         """Convert specified PDF pages to docx file.

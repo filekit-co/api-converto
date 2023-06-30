@@ -19,7 +19,7 @@ async def epub_to_doc(
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, 'epub',password)
+    doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.epub',password)
     
     return Response(
         content=doc_bytes.getvalue(),
@@ -41,7 +41,7 @@ async def pdf_to_doc(
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, 'pdf',password)
+    doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.pdf',password)
     
     return Response(
         content=doc_bytes.getvalue(),
@@ -58,12 +58,12 @@ async def pdf_to_doc(
         description="Convert a xps file to docx with optional fields",
         status_code=status.HTTP_200_OK,
         )
-async def xps_to_docx(
+async def xps_to_doc(
         file: Annotated[UploadFile, File(..., media_type=get_mimetype('.xps'))],
         password:  Annotated[Optional[str], Form()]=None,
     ):
     file_bytes = await file.read()
-    docx_bytes, filename = await convert_to_doc(file_bytes, file.filename, 'xps', password)
+    docx_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.xps', password)
     
     return Response(
         content=docx_bytes.getvalue(),
