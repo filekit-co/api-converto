@@ -5,7 +5,7 @@ from typing import List, Optional
 
 import fitz
 
-from exceptions import AlreadyEncryptException
+from exceptions import AlreadyEncryptException, InvalidPasswordException
 
 
 def convert_bytes_to_pdf(stream: bytes, input_type: str):
@@ -137,5 +137,16 @@ async def split_pdf(doc: fitz.Document, start: int, end: int):
     with fitz.Document() as splitted_pdf:
         splitted_pdf.insert_pdf(doc, from_page=start, to_page=end)
         splitted_pdf.save(out_bytes)
+        return out_bytes.getvalue()
+
+
+async def compress_pdf(file_bytes: bytes):
+    out_bytes = io.BytesIO()
+    with fitz.Document(stream=file_bytes, filetype='pdf') as doc:
+        doc.save(
+            out_bytes,
+            pretty=True,
+            garbage=4, clean=True, deflate=True, deflate_images=True, deflate_fonts=True, expand=255
+        )
         return out_bytes.getvalue()
 

@@ -168,6 +168,26 @@ async def split_to_pdfs(
         media_type=get_mimetype('.zip'),
     )
 
+@router.post(
+        path="/compress",
+        summary="Compress pdf file",
+        description="Compress a PDF file.",
+        status_code=status.HTTP_200_OK,
+        )
+async def compress_pdf(
+        file: Annotated[UploadFile, File(..., media_type=get_mimetype('.pdf'))],
+    ):
+    file_bytes = await file.read()
+    pdf_bytes = await pdf.compress_pdf(file_bytes)
+    
+    return Response(
+        content=pdf_bytes,
+        headers={
+            'Content-Disposition': f'attachment; filename={file.filename}'
+            },
+        media_type=get_mimetype('.pdf'),
+    )
+
 
 async def split_to_images():
     # https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/examples/convert-image
