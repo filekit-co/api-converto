@@ -20,3 +20,43 @@
 
 
 
+from typing import Annotated
+
+import fitz
+from fastapi import APIRouter, File, Form, Response, UploadFile, status
+
+from consts import get_extension, get_mimetype
+from utils import out_filename
+
+router = APIRouter(prefix='/images', tags=["images"])
+
+
+@router.post(
+        path="/to-png",
+        summary="Convert images to png format",
+        description="Valid input and out_types are ['png', 'pnm', 'pgm', 'ppm', 'pbm', 'pam', 'psd', 'ps', 'jpg', 'jpeg']",
+        status_code=status.HTTP_200_OK,
+        )
+async def convert(
+        file: Annotated[UploadFile, File(...)],
+        out_type: Annotated[str, Form()],
+    ):
+
+    with_leading_dot = '.' + out_type
+    input_type = get_extension(file.content_type)
+    out_name = out_filename(file.filename, input_type, with_leading_dot)
+    
+    file_bytes = await file.read()
+    pix = fitz.Pixmap(file_bytes)
+    
+
+    png_bytes = pix.tobytes(out_type)
+    
+    return Response(
+        content=png_bytes,
+        headers={
+            'Content-Disposition': f'attachment; filename={out_name}'
+            },
+        media_type=get_mimetype('.pdf'),
+    )
+
