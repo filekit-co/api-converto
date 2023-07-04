@@ -4,6 +4,7 @@ from fastapi import APIRouter, File, Form, Response, UploadFile, status
 
 from consts import get_mimetype
 from services import convert_to_doc
+from utils import content_disposition
 
 router = APIRouter(tags=["to-doc"])
 
@@ -46,7 +47,7 @@ async def pdf_to_doc(
     return Response(
         content=doc_bytes.getvalue(),
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.doc'),
     )
@@ -68,7 +69,7 @@ async def xps_to_doc(
     return Response(
         content=docx_bytes.getvalue(),
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.doc'),
         )

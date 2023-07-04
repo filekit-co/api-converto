@@ -4,7 +4,7 @@ from fastapi import APIRouter, File, Response, UploadFile, status
 
 from consts import get_mimetype
 from infra.pdf import convert_bytes_to_pdf
-from utils import out_filename
+from utils import content_disposition, out_filename
 
 router = APIRouter(tags=["to-pdf"])
 
@@ -25,7 +25,7 @@ async def xps_to_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -48,7 +48,7 @@ async def epub_to_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -70,7 +70,7 @@ async def oxps_to_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -91,7 +91,7 @@ async def cbz_to_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -112,7 +112,7 @@ async def fb2_to_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={filename}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )

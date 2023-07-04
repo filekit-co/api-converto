@@ -8,6 +8,7 @@ from consts import get_mimetype
 from exceptions import NotEnoughFiles
 from infra import pdf, zzip
 from services import split_pdf_ranges
+from utils import content_disposition
 
 router = APIRouter(prefix='/pdf', tags=["pdf-utils"])
 
@@ -29,7 +30,7 @@ async def encrypt_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={file.filename}'
+            'Content-Disposition': content_disposition(file.filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -53,7 +54,7 @@ async def decrypt_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={file.filename}'
+            'Content-Disposition': content_disposition(file.filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -79,7 +80,7 @@ async def add_watermark(
     return Response(
         content=out_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={pdf_file.filename}'
+            'Content-Disposition': content_disposition(pdf_file.filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -104,7 +105,7 @@ async def add_logo(
     return Response(
         content=out_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={pdf_file.filename}'
+            'Content-Disposition': content_disposition(pdf_file.filename)
             },
         media_type=get_mimetype('.pdf'),
     )
@@ -131,7 +132,7 @@ async def merge_pdfs(
     return Response(
         content=out_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={file_name}'
+            'Content-Disposition': content_disposition(file_name)
             },
         media_type=get_mimetype('.pdf'),        
     )
@@ -163,7 +164,7 @@ async def split_to_pdfs(
     return Response(
         content=zip_file_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={file_name}'
+            'Content-Disposition': content_disposition(file_name)
             },
         media_type=get_mimetype('.zip'),
     )
@@ -183,7 +184,7 @@ async def compress_pdf(
     return Response(
         content=pdf_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={file.filename}'
+            'Content-Disposition': content_disposition(file.filename)
             },
         media_type=get_mimetype('.pdf'),
     )

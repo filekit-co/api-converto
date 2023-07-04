@@ -26,7 +26,7 @@ import fitz
 from fastapi import APIRouter, File, Form, Response, UploadFile, status
 
 from consts import get_extension, get_mimetype
-from utils import out_filename
+from utils import content_disposition, out_filename
 
 router = APIRouter(prefix='/images', tags=["images"])
 
@@ -44,7 +44,7 @@ async def convert(
 
     with_leading_dot = '.' + out_type
     input_type = get_extension(file.content_type)
-    out_name = out_filename(file.filename, input_type, with_leading_dot)
+    filename = out_filename(file.filename, input_type, with_leading_dot)
     
     file_bytes = await file.read()
     pix = fitz.Pixmap(file_bytes)
@@ -55,7 +55,7 @@ async def convert(
     return Response(
         content=png_bytes,
         headers={
-            'Content-Disposition': f'attachment; filename={out_name}'
+            'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
