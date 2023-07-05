@@ -18,23 +18,21 @@
 # -	PSD	Adobe Photoshop Document
 # -	PS	Adobe Postscript
 
-
-
 from typing import Annotated
 
-import fitz
 from fastapi import APIRouter, File, Form, Response, UploadFile, status
 
 from consts import get_extension, get_mimetype
+from infra.img import convert_img_type
 from utils import content_disposition, out_filename
 
 router = APIRouter(prefix='/images', tags=["images"])
 
 
 @router.post(
-        path="/to-png",
+        path="/convert",
         summary="Convert images to png format",
-        description="Valid input and out_types are ['png', 'pnm', 'pgm', 'ppm', 'pbm', 'pam', 'psd', 'ps', 'jpg', 'jpeg']",
+        description="Valid input and out_types are ['png', 'pnm', 'pgm', 'ppm', 'pbm', 'pam', 'ps', 'jpg', 'jpeg']",
         status_code=status.HTTP_200_OK,
         )
 async def convert(
@@ -43,20 +41,19 @@ async def convert(
     ):
 
     with_leading_dot = '.' + out_type
-    input_type = get_extension(file.content_type)
+    input_type = get_extension(file.content_type, exclude_leading_dot=False)
     filename = out_filename(file.filename, input_type, with_leading_dot)
-    
     file_bytes = await file.read()
-    pix = fitz.Pixmap(file_bytes)
-    
-
-    png_bytes = pix.tobytes(out_type)
     
     return Response(
-        content=png_bytes,
+        content=convert_img_type(file_bytes, out_type),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
         media_type=get_mimetype('.pdf'),
     )
 
+
+
+#  TODO: https://pymupdf.readthedocs.io/en/latest/recipes-images.html
+#  TODO: to webp
