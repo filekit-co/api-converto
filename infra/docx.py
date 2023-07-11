@@ -36,8 +36,10 @@ class DocxConverter(Converter):
     def __enter__(self):
         return self
     
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+    def __exit__(self, exc_type, exc_val, exc_tb):        
+        self._fitz_doc.close()
+        self._fitz_doc = None
+
 
     @property
     def docx_name(self):
@@ -111,3 +113,4 @@ class DocxConverter(Converter):
                     raise MakedocxException(f'Error when make page {pid}: {e}')
 
         docx_file.save(path_or_stream=self.path_or_stream)
+        

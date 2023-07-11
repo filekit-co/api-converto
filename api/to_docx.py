@@ -24,7 +24,7 @@ async def epub_to_docx(
     docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.epub', password)
     
     return Response(
-        content=docx_bytes.getvalue(),
+        content=docx_bytes,
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -46,7 +46,7 @@ async def pdf_to_docx(
     docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.pdf', password)
     
     return Response(
-        content=docx_bytes.getvalue(),
+        content=docx_bytes,
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -69,7 +69,7 @@ async def xps_to_docx(
     docx_bytes, filename = await convert_to_docx(file_bytes, file.filename, '.xps',password)
     
     return Response(
-        content=docx_bytes.getvalue(),
+        content=docx_bytes,
         headers={
             'Content-Disposition': content_disposition(filename)
             },

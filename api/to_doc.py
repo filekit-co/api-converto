@@ -45,7 +45,7 @@ async def pdf_to_doc(
     doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.pdf',password)
     
     return Response(
-        content=doc_bytes.getvalue(),
+        content=doc_bytes,
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -67,7 +67,7 @@ async def xps_to_doc(
     docx_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.xps', password)
     
     return Response(
-        content=docx_bytes.getvalue(),
+        content=docx_bytes,
         headers={
             'Content-Disposition': content_disposition(filename)
             },
