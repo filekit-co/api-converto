@@ -1,10 +1,11 @@
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, File, Form, Response, UploadFile, status
+from fastapi.responses import StreamingResponse
 
 from consts import get_mimetype
 from services import convert_to_doc
-from utils import content_disposition
+from utils import content_disposition, generate_chunks
 
 router = APIRouter(tags=["to-doc"])
 
@@ -22,8 +23,8 @@ async def epub_to_doc(
     file_bytes = await file.read()
     doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.epub',password)
     
-    return Response(
-        content=doc_bytes.getvalue(),
+    return StreamingResponse(
+        content=generate_chunks(doc_bytes.getvalue()),
         headers={
             'Content-Disposition': f'attachment; filename={filename}'
             },
@@ -44,8 +45,8 @@ async def pdf_to_doc(
     file_bytes = await file.read()
     doc_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.pdf',password)
     
-    return Response(
-        content=doc_bytes,
+    return StreamingResponse(
+        content=generate_chunks(doc_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -66,8 +67,8 @@ async def xps_to_doc(
     file_bytes = await file.read()
     docx_bytes, filename = await convert_to_doc(file_bytes, file.filename, '.xps', password)
     
-    return Response(
-        content=docx_bytes,
+    return StreamingResponse(
+        content=generate_chunks(docx_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },

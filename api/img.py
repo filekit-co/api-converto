@@ -21,10 +21,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, File, Form, Response, UploadFile, status
+from fastapi.responses import StreamingResponse
 
 from consts import get_extension, get_mimetype
 from infra.img import convert_img_type
-from utils import content_disposition, out_filename
+from utils import content_disposition, generate_chunks, out_filename
 
 router = APIRouter(prefix='/images', tags=["images"])
 
@@ -43,10 +44,12 @@ async def convert(
     with_leading_dot = '.' + out_type
     input_type = get_extension(file.content_type, exclude_leading_dot=False)
     filename = out_filename(file.filename, input_type, with_leading_dot)
-    file_bytes = await file.read()
     
-    return Response(
-        content=convert_img_type(file_bytes, out_type),
+    file_bytes = await file.read()
+    out_bytes = convert_img_type(file_bytes, out_type)
+    
+    return StreamingResponse(
+        content=generate_chunks(out_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },

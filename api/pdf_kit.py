@@ -3,12 +3,13 @@ import logging
 from typing import Annotated, List
 
 from fastapi import APIRouter, File, Form, Response, UploadFile, status
+from fastapi.responses import StreamingResponse
 
 from consts import get_mimetype
 from exceptions import NotEnoughFiles
 from infra import pdf, zzip
 from services import split_pdf_ranges
-from utils import content_disposition
+from utils import content_disposition, generate_chunks
 
 router = APIRouter(prefix='/pdf', tags=["pdf-utils"])
 
@@ -27,8 +28,8 @@ async def encrypt_pdf(
     file_bytes = await file.read()
     pdf_bytes = pdf.encrypt_pdf(file_bytes, ro_password=password, rw_password=password)
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(file.filename)
             },
@@ -51,8 +52,8 @@ async def decrypt_pdf(
     file_bytes = await file.read()
     pdf_bytes = pdf.decrypt_pdf(file_bytes, password)
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(file.filename)
             },
@@ -77,8 +78,8 @@ async def add_watermark(
     )
 
     out_bytes = pdf.add_a_watermark(pdf_bytes, watermark_bytes, overlay)
-    return Response(
-        content=out_bytes,
+    return StreamingResponse(
+        content=generate_chunks(out_bytes),
         headers={
             'Content-Disposition': content_disposition(pdf_file.filename)
             },
@@ -102,8 +103,8 @@ async def add_logo(
     )
 
     out_bytes = pdf.add_a_logo(pdf_bytes, logo_bytes)
-    return Response(
-        content=out_bytes,
+    return StreamingResponse(
+        content=generate_chunks(out_bytes),
         headers={
             'Content-Disposition': content_disposition(pdf_file.filename)
             },
@@ -129,8 +130,8 @@ async def merge_pdfs(
     )
     out_bytes = await pdf.merge_pdfs(files)
 
-    return Response(
-        content=out_bytes,
+    return StreamingResponse(
+        content=generate_chunks(out_bytes),
         headers={
             'Content-Disposition': content_disposition(file_name)
             },
@@ -161,8 +162,8 @@ async def split_to_pdfs(
     # 3. zip pdfs bytes
     zip_file_bytes = await zzip.zip_files(out_files, file_names=splitted_page_range)
     file_name = f'{pdf_file.filename}.zip'
-    return Response(
-        content=zip_file_bytes,
+    return StreamingResponse(
+        content=generate_chunks(zip_file_bytes),
         headers={
             'Content-Disposition': content_disposition(file_name)
             },
@@ -181,8 +182,8 @@ async def compress_pdf(
     file_bytes = await file.read()
     pdf_bytes = await pdf.compress_pdf(file_bytes)
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(file.filename)
             },

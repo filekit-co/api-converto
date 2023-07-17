@@ -1,10 +1,11 @@
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, File, Response, UploadFile, status
+from fastapi.responses import StreamingResponse
 
 from consts import get_mimetype
 from infra.pdf import convert_bytes_to_pdf
-from utils import content_disposition, out_filename
+from utils import content_disposition, generate_chunks, out_filename
 
 router = APIRouter(tags=["to-pdf"])
 
@@ -22,8 +23,8 @@ async def xps_to_pdf(
     filename = out_filename(file.filename, '.xps', '.pdf')
     pdf_bytes = convert_bytes_to_pdf(file_bytes, '.xps')
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -45,8 +46,8 @@ async def epub_to_pdf(
     filename = out_filename(file.filename, '.epub', '.pdf')
     pdf_bytes = convert_bytes_to_pdf(file_bytes, '.epub')
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -67,8 +68,8 @@ async def oxps_to_pdf(
     filename = out_filename(file.filename, '.oxps', '.pdf')
     pdf_bytes = convert_bytes_to_pdf(file_bytes, '.oxps')
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -88,8 +89,8 @@ async def cbz_to_pdf(
     filename = out_filename(file.filename, '.cbz', '.pdf')
     pdf_bytes = convert_bytes_to_pdf(file_bytes, '.cbz')
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
@@ -109,8 +110,8 @@ async def fb2_to_pdf(
     filename = out_filename(file.filename, '.fb2', '.pdf')
     pdf_bytes = convert_bytes_to_pdf(file_bytes, '.fb2')
     
-    return Response(
-        content=pdf_bytes,
+    return StreamingResponse(
+        content=generate_chunks(pdf_bytes),
         headers={
             'Content-Disposition': content_disposition(filename)
             },
